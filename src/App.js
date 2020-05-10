@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
+import Message from "./message/Message";
 
 let socket;
 function App() {
   const [message, setMessage] = useState("");
   const [chats, setChats] = useState([]);
-  const [who, setWho] = useState("");
+  const [who, setWho] = useState("me");
 
   useEffect(() => {
-    socket = new WebSocket("ws://localhost:9898/");
+    socket = new WebSocket(
+      "ws://ec2-3-134-253-189.us-east-2.compute.amazonaws.com:9898/"
+    );
     const name = prompt(
       "Who are you",
       localStorage.getItem("who") ? localStorage.getItem("who") : ""
@@ -18,8 +21,9 @@ function App() {
     socket.onmessage = (e) => {
       const { message, from } = JSON.parse(e.data);
       setChats((chats) =>
-        chats.concat(`${new Date().toLocaleTimeString()} ${from}: ${message}`)
+        chats.concat({ id: new Date().toLocaleTimeString(), message, from })
       );
+      document.body.scrollIntoView(false);
     };
   }, []);
 
@@ -31,18 +35,19 @@ function App() {
   return (
     <div className="App">
       {chats.map((msg) => (
-        <div key={msg}>{msg}</div>
+        <Message key={msg.id} isSelf={msg.from === who} {...msg} />
       ))}
       <input
+        className="dark-mode"
         onChange={(e) => setMessage(e.target.value)}
         onKeyDown={(e) => {
           if (e.key === "Enter") {
             sendMessage();
           }
         }}
+        placeholder="Hit and send.."
         value={message}
       />
-      <button onClick={sendMessage}>Send</button>
     </div>
   );
 }

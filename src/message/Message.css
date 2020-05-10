@@ -1,0 +1,24 @@
+.msg-holder {
+  display: flex;
+}
+
+.from {
+  font-size: small;
+}
+
+.message {
+  margin: 4px;
+  padding: 8px;
+  border: 1px solid;
+  border-radius: 16px;
+}
+
+.isSelf {
+  justify-content: flex-end;
+}
+
+.time {
+  font-size: xx-small;
+  padding-right: 4px;
+  padding-left: 4px;
+}
