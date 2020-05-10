@@ -1,24 +1,48 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from "react";
+import "./App.css";
 
+let socket;
 function App() {
+  const [message, setMessage] = useState("");
+  const [chats, setChats] = useState([]);
+  const [who, setWho] = useState("");
+
+  useEffect(() => {
+    socket = new WebSocket("ws://localhost:9898/");
+    const name = prompt(
+      "Who are you",
+      localStorage.getItem("who") ? localStorage.getItem("who") : ""
+    );
+    localStorage.setItem("who", name);
+    setWho(name);
+    socket.onmessage = (e) => {
+      const { message, from } = JSON.parse(e.data);
+      setChats((chats) =>
+        chats.concat(`${new Date().toLocaleTimeString()} ${from}: ${message}`)
+      );
+    };
+  }, []);
+
+  const sendMessage = () => {
+    socket.send(JSON.stringify({ from: who, message }));
+    setMessage("");
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {chats.map((msg) => (
+        <div key={msg}>{msg}</div>
+      ))}
+      <input
+        onChange={(e) => setMessage(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            sendMessage();
+          }
+        }}
+        value={message}
+      />
+      <button onClick={sendMessage}>Send</button>
     </div>
   );
 }
