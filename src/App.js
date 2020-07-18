@@ -9,9 +9,7 @@ function App() {
   const [who, setWho] = useState("me");
 
   useEffect(() => {
-    socket = new WebSocket(
-      "ws://ec2-3-134-253-189.us-east-2.compute.amazonaws.com:9898/"
-    );
+    socket = new WebSocket(`ws://52.146.44.22:9898/`);
     const name = prompt(
       "Who are you",
       localStorage.getItem("who") ? localStorage.getItem("who") : ""
