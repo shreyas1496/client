@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import "./Message.css";
 
 function Message(props) {
-  const { className, isSelf, id, from, message } = props;
+  const { isSelf, id, from, message } = props;
   console.log(isSelf);
 
   if (isSelf) {
